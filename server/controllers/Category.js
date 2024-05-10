@@ -1,5 +1,6 @@
 const Category = require("../models/Category");
 const Course = require("../models/Course");
+const mongoose=require('mongoose');
 
 //Category creation
 exports.createCategory = async (req, res) => {
@@ -54,82 +55,93 @@ exports.showAllCategories = async (req, res) => {
         });
     }
 };
-
-//category Page Details
-
 exports.categoryPageDetails = async (req, res) => {
     try {
-        //get categoryId
-        console.log("getting info ");
         const { categoryId } = req.body;
-        console.log("received category id ",categoryId);
-        //get courses for specified categoryId
-        if(!categoryId){
-            return res.status(500).json({
-                success:false,
-                message: " Category Id missing "
-            })
-        }
-        const selectedCategory = await Category.findById(categoryId)
-            .populate("course")
-            .exec();
-        //validation
-        if (!selectedCategory) {
-            return res.status(404).json({
+
+        if (!categoryId) {
+            return res.status(400).json({
                 success: false,
-                message: "Category was Not Found in the database",
+                message: "Category Id is missing.",
             });
         }
-        console.log("work completed");
-        //get courses for different categories
-        const differentCategories = await Category.find({
-            _id: { $ne: categoryId },
-        })
-            .populate("course")
+
+        const selectedCategoryInfo = await Category.findById(categoryId);
+        if (!selectedCategoryInfo) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found in the database.",
+            });
+        }
+
+        const selectedCategoryPopular = await Category.findById(categoryId)
+            .populate({
+                path: "course",
+                options: { sort: { enrolledstudent: -1 } },
+            })
             .exec();
 
-        console.log("work completed");
-        //get top 10 selling courses
+        const selectedCategoryNewest = await Category.findById(categoryId)
+            .populate({
+                path: "course",
+                options: { sort: { createdAt: -1 } }
+            })
+            .exec();
+
+        // Fetch all categories except the selected one
+        const allCategoriesExceptSelected = await Category.find({ _id: { $ne: categoryId } }).exec();
+
+        // Randomly select one category from the array
+        const randomCategoryIndex = Math.floor(Math.random() * allCategoriesExceptSelected.length);
+        const randomCategory = allCategoriesExceptSelected[randomCategoryIndex];
+
+        const randomCategoryPopular = await Category.findById(randomCategory._id)
+            .populate({
+                path: "course",
+                options: { sort: { enrolledstudent: -1 } },
+            })
+            .exec();
+
         const courseWithMostStudents = await Course.aggregate([
             {
                 $match: {
-                    enrolledStudents: { $exists: true, $ne: null, $type: "array" }
+                    studentsEnrolled: { $exists: true, $ne: [], $type: "array" }
                 }
             },
             {
                 $project: {
                     _id: 1,
-                    courseName: 1,
+                    courseTitle: 1,
                     price: 1,
                     courseDescription: 1,
                     thumbnail: 1,
-                    enrolledStudentCount: { $size: "$enrolledStudents" },
-                },
+                    enrolledStudentCount: { $size: "$studentsEnrolled" }
+                }
             },
             {
-                $sort: { enrolledStudentCount: -1 },
+                $sort: { enrolledStudentCount: -1 }
             },
             {
-                $limit: 10,
-            },
+                $limit: 10
+            }
         ]);
-        
-        console.log("work completed");
 
-        //return response
         return res.status(200).json({
             success: true,
             data: {
-                selectedCategory,
-                differentCategories,
+                selectedCategoryInfo,
+                selectedCategoryNewest,
+                selectedCategoryPopular,
+                randomCategoryPopular,
                 courseWithMostStudents,
             },
         });
     } catch (error) {
-        console.log(error);
+        console.error("Error fetching category page details:", error);
         return res.status(500).json({
             success: false,
-            message: error.message,
+            message: "An error occurred while fetching category page details.",
+            error: error.message,
         });
     }
 };

@@ -4,12 +4,15 @@ import { categories } from "../../../services/apis";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { apiConnector } from "../../../services/apiConnector";
+import CourseSlider from "./CourseSlider";
+import CourseCard from "./CourseCard";
 import { getCategoryPageDetails } from "../../../services/operations/catalogPageAPI";
 
 const CatalogPage = () => {
     const { catalogName } = useParams();
     const [categoryId, setCategoryId] = useState(null);
     const [catalogData, setCatalogData] = useState(null);
+    const [isPopular,setIsPopular]=useState(true);
 
     useEffect(() => {
         const getCategoryId = async () => {
@@ -49,18 +52,37 @@ const CatalogPage = () => {
         catalogData ? (
             <div>
                 {console.log(catalogData)}
-                <p>{`Home/Catalog/${catalogData.selectedCategory.categoryName}`}</p>
-                <p>{catalogData.selectedCategory.categoryName}</p>
-                <p>{catalogData.selectedCategory.categoryDescription}</p>
+                <p>{`Home/Catalog/${catalogData.selectedCategoryInfo.categoryName}`}</p>
+                <p>{catalogData.selectedCategoryInfo.categoryName}</p>
+                <p>{catalogData.selectedCategoryInfo.categoryDescription}</p>
                 
                 {/* Section 1 */}
                 <section>
                     <div>
                         <div>Courses to get you started</div>
                         <div>
-                            <p>Most Popular</p>
-                            <p>New</p>
+                            <p onClick={()=>setIsPopular(true)}>Most Popular</p>
+                            <p onClick={()=>setIsPopular(false)}>New</p>
                         </div>
+                        <CourseSlider course={isPopular ? catalogData.selectedCategoryPopular.course: catalogData.selectedCategoryNewest.course }/>
+                    </div>
+                </section>
+
+                <section>
+                    <div>
+                        Top Courses in {catalogData.randomCategoryPopular.categoryName}
+                    </div>
+                    <CourseSlider course={catalogData.randomCategoryPopular.course}/>
+                </section>
+
+                <section>
+                    <div>Frequently Bought</div>
+                    <div>
+                        {
+                            catalogData.courseWithMostStudents.slice(0,4).map((course)=>{
+                                return (<CourseCard course={course} height={400}/>)
+                            })
+                        }
                     </div>
                 </section>
             </div>
