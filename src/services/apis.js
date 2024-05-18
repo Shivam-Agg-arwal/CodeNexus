@@ -50,5 +50,11 @@ export const ratingEndpoints={
     GET_AVG_RATING_API:BASE_URL+"/course/getAverageRating",
     GET_COURSE_RATING:BASE_URL+"/course/getAllRatingCourse",
     GET_ALL_RATING:BASE_URL+"/course/getAllRating",
-    
+}
+
+
+export const paymentEndpoints={
+    CAPTURE_PAYMENT_API:BASE_URL+"/payment/capturePayment",
+    VERIFY_PAYMENT_API:BASE_URL+"/payment/verifyPayment",
+    SEND_SUCCESS_MAIL:BASE_URL+"/payment/sendSuccessMail",
 }
