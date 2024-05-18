@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { apiConnector } from "../../../services/apiConnector";
 import CourseSlider from "./CourseSlider";
-import CourseCard from "./CourseCard";
+import Course_Card from "./Course_Card";
 import { getCategoryPageDetails } from "../../../services/operations/catalogPageAPI";
 
 const CatalogPage = () => {
@@ -64,7 +64,7 @@ const CatalogPage = () => {
                             <p onClick={()=>setIsPopular(true)}>Most Popular</p>
                             <p onClick={()=>setIsPopular(false)}>New</p>
                         </div>
-                        <CourseSlider course={isPopular ? catalogData.selectedCategoryPopular.course: catalogData.selectedCategoryNewest.course }/>
+                        <CourseSlider courses={isPopular ? catalogData.selectedCategoryPopular.course: catalogData.selectedCategoryNewest.course }/>
                     </div>
                 </section>
 
@@ -72,7 +72,7 @@ const CatalogPage = () => {
                     <div>
                         Top Courses in {catalogData.randomCategoryPopular.categoryName}
                     </div>
-                    <CourseSlider course={catalogData.randomCategoryPopular.course}/>
+                    <CourseSlider courses={catalogData.randomCategoryPopular.course}/>
                 </section>
 
                 <section>
@@ -80,7 +80,7 @@ const CatalogPage = () => {
                     <div>
                         {
                             catalogData.courseWithMostStudents.slice(0,4).map((course)=>{
-                                return (<CourseCard course={course} height={400}/>)
+                                return (<Course_Card course={course} Height={400}/>)
                             })
                         }
                     </div>

@@ -21,6 +21,7 @@ import MyCourses from "./components/core/Dashboard/MyCourses/MyCourses";
 import EditCourse from "./components/core/Dashboard/MyCourses/EditCourse";
 import AddCourse from "./components/core/Dashboard/CourseCreation.jsx/AddCourse";
 import CatalogPage from "./components/core/Category/CatalogPage";
+import CourseDetails from "./components/core/Category/CourseDetails";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -37,6 +38,7 @@ function App() {
 				<Route path="/forgot-password" element={<ForgotPassword />} />
 				<Route path="/update-password/:id" element={<UpdatePassword />} />
 				<Route path="/catalog/:catalogName" element={<CatalogPage />} />
+				<Route path="/courses/:courseId" element={<CourseDetails/>} />
 
 				<Route element={
 					<ProtectedRoute>
