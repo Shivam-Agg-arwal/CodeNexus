@@ -3,6 +3,7 @@ const { instance } = require("../config/razorpay");
 const Course = require("../models/Course");
 const User = require("../models/User");
 const { mailSender } = require("../utils/MailSender");
+const crypto=require('crypto');
 
 exports.createOrder = async (req, res) => {
     try {
@@ -72,11 +73,12 @@ exports.createOrder = async (req, res) => {
 }
 exports.verifyOrder = async (req, res) => {
     try {
-        const razorpay_order_id = req.body?.razorpay_order_id;
-        const razorpay_payment_id = req.body?.razorpay_payment_id;
-        const razorpay_signature = req.body?.razorpay_signature;
+        const razorpay_order_id = req.body?.formData?.razorpay_order_id;
+        const razorpay_payment_id = req.body?.formData?.razorpay_payment_id;
+        const razorpay_signature = req.body?.formData?.razorpay_signature;
+        console.log("verify ki body ",req.body);
 
-        const { courses } = req.body;
+        const { courses } = req.body?.formData;
         const userID = req.user.id;
 
         if (
@@ -94,7 +96,7 @@ exports.verifyOrder = async (req, res) => {
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-        const expectedSignature = cyrpto
+        const expectedSignature = crypto
             .createHmac("sha256", process.env.KEY_SECRET)
             .update(body.toString())
             .digest("hex");
@@ -164,6 +166,7 @@ exports.sendSuccessMail = async (req, res) => {
     try {
         const { order_id, payment_id, amt } = req.body;
         const userID = req.user.id;
+
 
         // Validate input
         if (!order_id || !payment_id || !amt) {
