@@ -269,6 +269,33 @@ exports.getAllMyCreatedCourses=async(req,res)=>{
         })
     }
 }
+//show all  bought student  courses
+exports.getAllEnrolledCourses=async(req,res)=>{
+
+    try{
+        const userID=req.user.id;
+
+        const user=await User.findById(userID).populate("courses").exec();
+        if(!user){
+            return res.status(500).json({
+                sucess:false,
+                message:"User not found",
+            })
+        }
+        const boughtCourses=user.courses;
+        return res.status(200).json({
+            message:"Course Fetched Successfully",
+            success:true,
+            data:boughtCourses,
+        })
+    }catch(error){
+        console.log("Problem occured while fetching the courses",error);
+        return res.status(500).json({
+            success:false,
+            message:"Course Fetch failed"
+        })
+    }
+}
 
 
 

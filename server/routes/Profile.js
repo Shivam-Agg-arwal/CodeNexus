@@ -34,7 +34,7 @@ const {
 router.post("/updateProfile",auth,updateProfile);
 router.delete("/deleteAccount",auth,deleteAccount);
 router.post("/updateDisplayPicture",auth,updateDisplayPicture);
-router.get("/getEnrolledCourses",auth,isStudent,getEnrolledCourses);
+router.post("/getEnrolledCourses",auth,isStudent,getEnrolledCourses);
 router.get("/getUserDetails",auth,getAllUserDetails);
 router.get("/getProfileImg",auth,getProfileImg);
 
