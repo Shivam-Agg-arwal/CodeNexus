@@ -21,7 +21,7 @@ import MyCourses from "./components/core/Dashboard/MyCourses/MyCourses";
 import EditCourse from "./components/core/Dashboard/MyCourses/EditCourse";
 import AddCourse from "./components/core/Dashboard/CourseCreation.jsx/AddCourse";
 import CatalogPage from "./components/core/Category/CatalogPage";
-import CourseDetails from "./components/core/Category/CourseDetails";
+import CourseDetails from "./pages/CourseDetails";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);

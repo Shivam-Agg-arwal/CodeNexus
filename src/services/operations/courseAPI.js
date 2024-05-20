@@ -41,32 +41,19 @@ export const getAllCourses = async () => {
 	return result
 }
 
-export const fetchCourseDetails = async (data,token) => {
+export const fetchCourseDetails = async (courseId) => {
 	const toastId = toast.loading("Loading...")
-	//   dispatch(setLoading(true));
 	let result = null
 	try {
-		console.log([...data]);
-		const response = await apiConnector("POST", COURSE_DETAILS_API,data, {
-			"Content-Type": "multipart/form-data",
-			Authorization: `Bearer ${token}`,
-		})
+		const response = await apiConnector("POST", COURSE_DETAILS_API,{courseID:courseId})
 		console.log("COURSE_DETAILS_API API RESPONSE............", response)
 
-		if (!response.success) {
-			throw new Error(response.message)
-		}
-		else{
-			result = response.data;
-			console.log("got",result);
-		}
+		result=response;
 	} catch (error) {
 		console.log("COURSE_DETAILS_API API ERROR............", error)
-		// toast.error(error.response.data.message);
+		result={success:false}
 	}
-	toast.dismiss(toastId)
-	//   dispatch(setLoading(false));
-	console.log("returnign ",result);
+	toast.dismiss(toastId);
 	return result
 }
 
