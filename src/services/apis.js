@@ -35,6 +35,7 @@ export const courseEndpoints={
     COURSE_DETAILS_API:BASE_URL+"/course/getCourseDetails",
     GET_INSTRUCTOR_COURSES_API:BASE_URL+"/course/getCreatedCourses",
     DELETE_COURSE_API:BASE_URL+"/course/deleteCourse",
+    GET_COURSE_PLUS_PROGRESS_DETAILS_API:BASE_URL+"/course/getCoursePlusProgressDetails",
     
     CREATE_SECTION_API:BASE_URL+"/course/createSection",
     UPDATE_SECTION_API:BASE_URL+"/course/updateSection",

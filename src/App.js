@@ -22,6 +22,8 @@ import EditCourse from "./components/core/Dashboard/MyCourses/EditCourse";
 import AddCourse from "./components/core/Dashboard/CourseCreation.jsx/AddCourse";
 import CatalogPage from "./components/core/Category/CatalogPage";
 import CourseDetails from "./pages/CourseDetails";
+import CourseViewer from "./pages/CourseViewer";
+import VideoPlayer from "./components/core/CourseViewer/VideoPlayer";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -39,6 +41,11 @@ function App() {
 				<Route path="/update-password/:id" element={<UpdatePassword />} />
 				<Route path="/catalog/:catalogName" element={<CatalogPage />} />
 				<Route path="/courses/:courseId" element={<CourseDetails/>} />
+
+
+				<Route element={<CourseViewer/>}>
+					{ user && user.accountType ==="Student" && <Route path="/view-course/:courseId/section/:sectionId/subSection/:subSectionId" element={<VideoPlayer/>}/>}
+				</Route>
 
 				<Route element={
 					<ProtectedRoute>

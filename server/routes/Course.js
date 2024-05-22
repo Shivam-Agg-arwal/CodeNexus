@@ -13,7 +13,8 @@ const {
     editCourse,
     getAllMyCreatedCourses,
     deleteCourse,
-    getAllEnrolledCourses
+    getAllEnrolledCourses,
+    getCoursePlusProgressDetails
 }=require('../controllers/Course');
 
 //Rating and Reviews controllers import
@@ -75,6 +76,7 @@ router.post("/editCourse",auth,isInstructor,editCourse);
 router.get("/getCreatedCourses",auth,isInstructor,getAllMyCreatedCourses);
 router.post("/deleteCourse",auth,isInstructor,deleteCourse)
 router.post("/getEnrolledCourses",auth,isInstructor,getAllEnrolledCourses)
+router.post("/getCoursePlusProgressDetails",auth,isStudent,getCoursePlusProgressDetails)
 
 router.post("/createSection",auth,isInstructor,createSection);
 router.post("/updateSection",auth,isInstructor,updateSection);
