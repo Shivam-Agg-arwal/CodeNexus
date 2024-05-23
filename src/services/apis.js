@@ -3,7 +3,7 @@ const BASE_URL="http://localhost:4000/api/v1";
 export const categories={
     CATEGORIES_API:BASE_URL+"/course/showAllCategories",
     CREATE_CATEGORY_API:BASE_URL+"/course/createCategory",
-    CATALOGPAGEDATA_API:BASE_URL+"/course/categoryPageDetails"
+    CATALOG_PAGE_DATA_API:BASE_URL+"/course/categoryPageDetails"
 }
 
 

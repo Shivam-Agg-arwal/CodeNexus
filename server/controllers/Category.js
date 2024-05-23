@@ -78,13 +78,21 @@ exports.categoryPageDetails = async (req, res) => {
             .populate({
                 path: "course",
                 options: { sort: { enrolledstudent: -1 } },
+                populate:({
+                    path:"instructor"
+                })
             })
+            
             .exec();
 
         const selectedCategoryNewest = await Category.findById(categoryId)
             .populate({
                 path: "course",
-                options: { sort: { createdAt: -1 } }
+                options: { sort: { createdAt: -1 } },
+                populate:({
+                    path:"instructor"
+                })
+
             })
             .exec();
 
@@ -99,32 +107,42 @@ exports.categoryPageDetails = async (req, res) => {
             .populate({
                 path: "course",
                 options: { sort: { enrolledstudent: -1 } },
+                populate:({
+                    path:"instructor"
+                })
             })
             .exec();
 
-        const courseWithMostStudents = await Course.aggregate([
-            {
-                $match: {
-                    studentsEnrolled: { $exists: true, $ne: [], $type: "array" }
+            let courseWithMostStudents = await Course.aggregate([
+                {
+                    $match: {
+                        studentsEnrolled: { $exists: true, $ne: [], $type: "array" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        courseTitle: 1,
+                        price: 1,
+                        courseDescription: 1,
+                        thumbnail: 1,
+                        enrolledStudentCount: { $size: "$studentsEnrolled" },
+                        instructor:true
+                    }
+                },
+                {
+                    $sort: { enrolledStudentCount: -1 }
+                },
+                {
+                    $limit: 10
                 }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    courseTitle: 1,
-                    price: 1,
-                    courseDescription: 1,
-                    thumbnail: 1,
-                    enrolledStudentCount: { $size: "$studentsEnrolled" }
-                }
-            },
-            {
-                $sort: { enrolledStudentCount: -1 }
-            },
-            {
-                $limit: 10
-            }
-        ]);
+            ]);
+    
+            // Populate instructor field for the aggregated courses
+            courseWithMostStudents = await Course.populate(courseWithMostStudents, {
+                path: "instructor",
+                select: "firstName lastName" // Adjust the fields you want to select from the instructor model
+            });
 
         return res.status(200).json({
             success: true,

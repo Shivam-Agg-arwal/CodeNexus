@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 const Course_Card = ({ course, Height }) => {
     const [avgReviewCount, setAvgReviewCount] = useState(0);
 
+    // console.log("Course ",course);
+
     useEffect(() => {
         const count = GetAvgRating(course.ratingAndReviews);
         setAvgReviewCount(count);
@@ -19,12 +21,12 @@ const Course_Card = ({ course, Height }) => {
                         <img
                             src={course?.thumbnail}
                             alt="course thumnail"
-                            className={`${Height} w-full rounded-xl object-cover `}
+                            className={`${Height} w-full rounded-xl object-cover aspect-video `}
                         />
                     </div>
                     <div className="flex flex-col gap-2 px-1 py-3">
                         <p className="text-xl text-richblack-5">
-                            {course?.courseName}
+                            {course?.courseTitle}
                         </p>
                         <p className="text-sm text-richblack-50">
                             {course?.instructor?.firstName}{" "}
