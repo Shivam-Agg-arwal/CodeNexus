@@ -144,9 +144,7 @@ const VideoPlayer = () => {
 
     const handleLectureCompletion = async () => {
         setLoading(true);
-		console.log("Making the call")
         const res = await apiConnector("POST",UPDATE_COURSE_PROGRESS_API,{subSectionId,courseId,token});
-		console.log("REceived ",res);
         if (res?.success) {
             dispatch(updateCompletedLectures(subSectionId));
 			toast.success('Marked as Completed')
