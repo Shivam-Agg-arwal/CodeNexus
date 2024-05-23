@@ -19,11 +19,13 @@ const CourseViewer = () => {
     useEffect(() => {
         const fetchCourseData = async () => {
             try {
+                console.log('fetchign coure in fo ');
                 const response = await apiConnector(
                     "POST",
                     GET_COURSE_PLUS_PROGRESS_DETAILS_API,
                     { token, courseID: courseId }
                 );
+                console.log("Response",response)
 
                 if (response?.success) {
                     let lectures = 0;

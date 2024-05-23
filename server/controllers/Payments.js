@@ -4,6 +4,7 @@ const Course = require("../models/Course");
 const User = require("../models/User");
 const { mailSender } = require("../utils/MailSender");
 const crypto=require('crypto');
+const CourseProgress = require("../models/CourseProgress");
 
 exports.createOrder = async (req, res) => {
     try {
@@ -104,6 +105,10 @@ exports.verifyOrder = async (req, res) => {
         if (expectedSignature === razorpay_signature) {
             // Enroll the student in the course
             await enrollTheStudent(userID, courses, res);
+
+            for(let course of courses){
+                const createdCourseProgess=await CourseProgress.create({userID:userID,courseID:course});
+            }
 
             return res.status(200).json({
                 success: true,

@@ -59,3 +59,7 @@ export const paymentEndpoints={
     VERIFY_PAYMENT_API:BASE_URL+"/payment/verifyPayment",
     SEND_SUCCESS_MAIL:BASE_URL+"/payment/sendSuccessMail",
 }
+
+export const courseProgrssEndpoints={
+    UPDATE_COURSE_PROGRESS_API:BASE_URL+"/courseProgress/updateCourseProgress"
+}

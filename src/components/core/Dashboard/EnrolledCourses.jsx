@@ -20,6 +20,7 @@ const EnrolledCourses = () => {
                     { token }
                 );
                 setEnrolledCourses(response.data);
+                console.log("data",response.data);
             } catch (error) {
                 console.error("Problem occurred while fetching the courses:", error);
             }
@@ -73,7 +74,7 @@ const EnrolledCourses = () => {
                                     <div>{course.courseDescription}</div>
                                 </div>
                             </div>
-                            <div>{course.totalDuration}</div>
+                            <div>{course.duration}</div>
                             <div>
                                 <div>
                                     Progress: {course.progressPercentage || 0}%

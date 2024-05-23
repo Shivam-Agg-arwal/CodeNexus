@@ -1,3 +1,4 @@
+const CourseProgress = require("../models/CourseProgress");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
@@ -176,6 +177,23 @@ exports.getProfileImg = async (req, res) => {
     }
 };
 
+function formatDuration(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    let result = '';
+    if (hours > 0) {
+        result += `${hours}h `;
+    }
+    if (minutes > 0 || hours > 0) { // include minutes if hours are present
+        result += `${minutes}m `;
+    }
+    result += `${secs}s`;
+
+    return result.trim();
+}
+
 exports.getEnrolledCourses = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -190,15 +208,46 @@ exports.getEnrolledCourses = async (req, res) => {
                 },
             })
             .exec();
+
+        
+        
         if (!userDetails) {
             return res.status(400).json({
                 success: false,
                 message: `Could not find user with id: ${userDetails}`,
             });
         }
+
+        const courseData = await Promise.all(userDetails.courses.map(async course => {
+            let totalDuration = 0;
+            let totalSubSections = 0;
+
+            const courseProgress = await CourseProgress.findOne({ userID: userId, courseID: course._id });
+            const completedSubSections = courseProgress ? courseProgress.completesVideos.length : 0;
+
+            course.courseContent.forEach(section => {
+                section.subSections.forEach(subSection => {
+                    totalDuration += subSection.duration;
+                    totalSubSections++;
+                });
+            });
+
+            const progressPercentage = totalSubSections > 0 ? (completedSubSections / totalSubSections) * 100 : 0;
+
+            return {
+                ...course.toObject(),
+                duration: formatDuration(totalDuration),
+                progressPercentage: progressPercentage.toFixed(2) // Optional: format to 2 decimal places
+            };
+        }));
+
+
+
+        console.log(courseData);
+
         return res.status(200).json({
             success: true,
-            data: userDetails.courses,
+            data: courseData,
         });
     } catch (error) {
         return res.status(500).json({

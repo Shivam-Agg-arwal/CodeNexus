@@ -6,6 +6,7 @@ const profileRoutes=require('./routes/Profile');
 const paymentRoutes=require('./routes/Payment');
 const courseRoutes=require('./routes/Course');
 const contactRoutes=require('./routes/Contact')
+const courseProgressRoutes=require('./routes/CourseProgress')
 
 
 const {dbConnect}=require('./config/database');
@@ -43,6 +44,7 @@ app.use("/api/v1/profile",profileRoutes);
 app.use("/api/v1/payment",paymentRoutes);
 app.use("/api/v1/course",courseRoutes);
 app.use("/api/v1/contact",contactRoutes);
+app.use("/api/v1/courseProgress",courseProgressRoutes);
 
 app.get("/",(req,res)=>{
     return res.json({
