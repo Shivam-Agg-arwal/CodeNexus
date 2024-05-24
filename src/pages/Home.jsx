@@ -5,7 +5,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { PiMedal } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { IoDiamond, IoSchool } from "react-icons/io5";
-import banner from "../assets/Images/banner.mp4";
+import banner from "../assets/homepagevideo.mp4"
 import HomeCore from "../components/core/Home/HomeCore";
 import { VscSymbolNamespace } from "react-icons/vsc";
 import TimeLineImage from "../assets/Images/TimelineImage.png";
