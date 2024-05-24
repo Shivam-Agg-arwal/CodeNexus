@@ -26,6 +26,7 @@ export const profileEndpoints={
     UPDATE_DP_API:BASE_URL+"/profile/updateDisplayPicture",
     GET_ENROLLED_COURSES_API:BASE_URL+"/profile/getEnrolledCourses",
     GET_DP_API:BASE_URL+"/profile/getProfileImg",
+    GET_INSTRUCTOR_DASHBOARD_DETAILS:BASE_URL+"/profile/getInstructorDashboardDetails",
 }
 
 export const courseEndpoints={

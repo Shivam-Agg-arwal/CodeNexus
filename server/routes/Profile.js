@@ -12,14 +12,16 @@ const {
     deleteAccount,
     getEnrolledCourses,
     updateDisplayPicture,
-    getProfileImg
+    getProfileImg,
+    getInstructorDashboardDetails
 }=require('../controllers/Profile');
 
 
 //Middlewares import
 const {
     auth,
-    isStudent
+    isStudent,
+    isInstructor
 }=require('../middlewares/auth');
 
 
@@ -37,6 +39,7 @@ router.post("/updateDisplayPicture",auth,updateDisplayPicture);
 router.post("/getEnrolledCourses",auth,isStudent,getEnrolledCourses);
 router.get("/getUserDetails",auth,getAllUserDetails);
 router.get("/getProfileImg",auth,getProfileImg);
+router.post("/getInstructorDashboardDetails",auth,isInstructor,getInstructorDashboardDetails);
 
 
 module.exports=router;

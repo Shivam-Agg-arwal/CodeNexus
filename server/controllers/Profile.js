@@ -1,3 +1,4 @@
+const Course = require("../models/Course");
 const CourseProgress = require("../models/CourseProgress");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
@@ -182,11 +183,12 @@ function formatDuration(seconds) {
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    let result = '';
+    let result = "";
     if (hours > 0) {
         result += `${hours}h `;
     }
-    if (minutes > 0 || hours > 0) { // include minutes if hours are present
+    if (minutes > 0 || hours > 0) {
+        // include minutes if hours are present
         result += `${minutes}m `;
     }
     result += `${secs}s`;
@@ -202,15 +204,13 @@ exports.getEnrolledCourses = async (req, res) => {
                 path: "courses",
                 populate: {
                     path: "courseContent",
-                    populate:{
-                        path:"subSections"
-                    }
+                    populate: {
+                        path: "subSections",
+                    },
                 },
             })
             .exec();
 
-        
-        
         if (!userDetails) {
             return res.status(400).json({
                 success: false,
@@ -218,30 +218,38 @@ exports.getEnrolledCourses = async (req, res) => {
             });
         }
 
-        const courseData = await Promise.all(userDetails.courses.map(async course => {
-            let totalDuration = 0;
-            let totalSubSections = 0;
+        const courseData = await Promise.all(
+            userDetails.courses.map(async (course) => {
+                let totalDuration = 0;
+                let totalSubSections = 0;
 
-            const courseProgress = await CourseProgress.findOne({ userID: userId, courseID: course._id });
-            const completedSubSections = courseProgress ? courseProgress.completesVideos.length : 0;
-
-            course.courseContent.forEach(section => {
-                section.subSections.forEach(subSection => {
-                    totalDuration += subSection.duration;
-                    totalSubSections++;
+                const courseProgress = await CourseProgress.findOne({
+                    userID: userId,
+                    courseID: course._id,
                 });
-            });
+                const completedSubSections = courseProgress
+                    ? courseProgress.completesVideos.length
+                    : 0;
 
-            const progressPercentage = totalSubSections > 0 ? (completedSubSections / totalSubSections) * 100 : 0;
+                course.courseContent.forEach((section) => {
+                    section.subSections.forEach((subSection) => {
+                        totalDuration += subSection.duration;
+                        totalSubSections++;
+                    });
+                });
 
-            return {
-                ...course.toObject(),
-                duration: formatDuration(totalDuration),
-                progressPercentage: progressPercentage.toFixed(2) // Optional: format to 2 decimal places
-            };
-        }));
+                const progressPercentage =
+                    totalSubSections > 0
+                        ? (completedSubSections / totalSubSections) * 100
+                        : 0;
 
-
+                return {
+                    ...course.toObject(),
+                    duration: formatDuration(totalDuration),
+                    progressPercentage: progressPercentage.toFixed(2), // Optional: format to 2 decimal places
+                };
+            })
+        );
 
         console.log(courseData);
 
@@ -280,6 +288,47 @@ exports.deleteAccount = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "User Cannot be deleted successfully",
+        });
+    }
+};
+
+exports.getInstructorDashboardDetails = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const courses = await Course.find({ instructor: userId });
+
+        let totalStudents = 0;
+        let totalAmount = 0;
+
+        // Collect detailed stats for each course
+        const courseStatData = courses.map((course) => {
+            totalStudents += course.studentsEnrolled.length;
+            totalAmount += course.studentsEnrolled.length * course.price;
+
+            return {
+                courseId: course._id,
+                courseName: course.courseTitle,
+                image: course.thumbnail,
+                studentsEnrolled: course.studentsEnrolled.length,
+                revenue: course.studentsEnrolled.length * course.price,
+                price:course.price,
+            };
+        });
+
+        // Send the response with the calculated details
+        res.status(200).json({
+            success: true,
+            data: {
+                totalStudents,
+                totalAmount,
+                courseStatData,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
         });
     }
 };

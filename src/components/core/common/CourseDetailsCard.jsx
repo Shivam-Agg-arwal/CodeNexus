@@ -39,55 +39,59 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
     };
 
     return (
-        <div>
+        <div className="rounded-xl bg-richblack-700 w-[370px]">
             <img
                 src={ThumbnailImage}
                 alt="Thumbnail Image"
-                className="max-h-[300px] min-h-[180px] w-[400px] rounded-xl"
+                className="w-full rounded-xl aspect-video"
             />
-            <div>Rs. {CurrentPrice}</div>
-            <div className="flex flex-col gap-y-6">
-                <button
-                    className="bg-yellow-50 w-fit text-richblack-900"
-                    onClick={
-                        user && course?.studentsEnrolled.includes(user?._id)
-                            ? () => navigate("/dashboard/enrolled-courses")
-                            : handleBuyCourse
-                    }
-                >
-                    {user && course?.studentsEnrolled.includes(user?._id)
-                        ? "Go to Course "
-                        : "Buy Now"}
-                </button>
-
-                {!course?.studentsEnrolled.includes(user?._id) && (
+            <div className="w-11/12 mx-auto">
+                <div className="text-lg text-white p-2 mt-4">Rs. {CurrentPrice}</div>
+                <div className="flex flex-col gap-y-2">
                     <button
-                        onClick={handleAddToCart}
-                        className="bg-yellow-50 w-fit text-richblack-900"
+                        className="bg-yellow-50 text-richblack-900 font-bold w-full rounded-lg py-2 hover:scale-95 mx-auto shadow-[0_1px_0px_0px_rgba(255,255,237,1)]"
+                        onClick={
+                            user && course?.studentsEnrolled.includes(user?._id)
+                                ? () => navigate("/dashboard/enrolled-courses")
+                                : handleBuyCourse
+                        }
                     >
-                        Add to Cart
+                        {user && course?.studentsEnrolled.includes(user?._id)
+                            ? "Go to Course "
+                            : "Buy Now"}
                     </button>
-                )}
-            </div>
 
-            <div>
-                <p>30-Day Money-Back Guarantee</p>
-                <p>This Course Includes:</p>
-                <div className="flex flex-col gap-y-3">
-                    {course?.instructions?.map((item, index) => (
-                        <p key={index} className="flex gap-2">
-                            <span>{item}</span>
-                        </p>
-                    ))}
+                    {!course?.studentsEnrolled.includes(user?._id) && (
+                        <button
+                            onClick={handleAddToCart}
+                            className="bg-richblack-800 text-richblack-5 font-bold w-full rounded-lg py-2 hover:scale-95 mx-auto shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
+                        >
+                            Add to Cart
+                        </button>
+                    )}
                 </div>
-            </div>
-            <div>
-                <button
-                    className="mx-auto flex items-center gap-2 p-6 text-yellow-50"
-                    onClick={handleShare}
-                >
-                    Share
-                </button>
+
+                <div>
+                    <p className="mx-auto text-richblack-100 text-center text-sm mt-2">
+                        30-Day Money-Back Guarantee
+                    </p>
+                    <p>This Course Includes:</p>
+                    <div className="flex flex-col gap-y-3">
+                        {course?.instructions?.map((item, index) => (
+                            <p key={index} className="flex gap-2">
+                                <span>{item}</span>
+                            </p>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <button
+                        className="mx-auto flex items-center gap-2 p-2 font-bold text-yellow-50"
+                        onClick={handleShare}
+                    >
+                        Share
+                    </button>
+                </div>
             </div>
         </div>
     );
