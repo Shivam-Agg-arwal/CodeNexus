@@ -12,7 +12,7 @@ const subSectionSchema=new mongoose.Schema({
         trim:true,
     },
     duration:{
-        type:String,
+        type:Number,
         trim:true,
     },
     videoURL:{

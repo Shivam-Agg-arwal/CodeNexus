@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { updateCompletedLectures } from "../../../components/core/slices/viewCourseSlice";
 import ReactPlayer from "react-player";
-import { AiFillPlayCircle } from "react-icons/ai";
+import { RiLoopLeftFill } from "react-icons/ri";
+import { FaBackward } from "react-icons/fa6";
+import { FaForward } from "react-icons/fa6";
 
-import {apiConnector} from '../../../services/apiConnector'
+import { apiConnector } from "../../../services/apiConnector";
 import { courseProgrssEndpoints } from "../../../services/apis";
 import toast from "react-hot-toast";
 
@@ -19,7 +21,7 @@ const VideoPlayer = () => {
     const { courseSectionData, courseEntireData, completedLectures } =
         useSelector((state) => state.viewCourse);
 
-		const {UPDATE_COURSE_PROGRESS_API}=courseProgrssEndpoints;
+    const { UPDATE_COURSE_PROGRESS_API } = courseProgrssEndpoints;
 
     const [videoData, setVideoData] = useState(null);
     const [videoEnded, setVideoEnded] = useState(false);
@@ -87,13 +89,16 @@ const VideoPlayer = () => {
             currentSectionIndex
         ].subSections.findIndex((data) => data._id === subSectionId);
 
-        if (currentSubSectionIndex !== courseSectionData[currentSectionIndex].subSections.length - 1) {
+        if (
+            currentSubSectionIndex !==
+            courseSectionData[currentSectionIndex].subSections.length - 1
+        ) {
             const nextSubSectionId =
                 courseSectionData[currentSectionIndex].subSections[
                     currentSubSectionIndex + 1
                 ]._id;
             navigate(
-                `/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`
+                `/view-course/${courseId}/section/${sectionId}/subSection/${nextSubSectionId}`
             );
         } else {
             const nextSectionId =
@@ -102,13 +107,14 @@ const VideoPlayer = () => {
                 courseSectionData[currentSectionIndex + 1]?.subSections[0]?._id;
             if (nextSectionId && nextSubSectionId) {
                 navigate(
-                    `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
+                    `/view-course/${courseId}/section/${nextSectionId}/subSection/${nextSubSectionId}`
                 );
             }
         }
     };
 
     const goToPrevVideo = () => {
+        console.log('called');
         const currentSectionIndex = courseSectionData.findIndex(
             (data) => data._id === sectionId
         );
@@ -123,7 +129,7 @@ const VideoPlayer = () => {
                     currentSubSectionIndex - 1
                 ]._id;
             navigate(
-                `/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}`
+                `/view-course/${courseId}/section/${sectionId}/subSection/${prevSubSectionId}`
             );
         } else {
             const prevSectionId =
@@ -136,47 +142,56 @@ const VideoPlayer = () => {
                 ]?._id;
             if (prevSectionId && prevSubSectionId) {
                 navigate(
-                    `/view-course/${courseId}/section/${prevSectionId}/sub-section/${prevSubSectionId}`
+                    `/view-course/${courseId}/section/${prevSectionId}/subSection/${prevSubSectionId}`
                 );
             }
         }
     };
 
     const handleLectureCompletion = async () => {
+        if(completedLectures.includes(subSectionId))    return ;
         setLoading(true);
-        const res = await apiConnector("POST",UPDATE_COURSE_PROGRESS_API,{subSectionId,courseId,token});
+        const res = await apiConnector("POST", UPDATE_COURSE_PROGRESS_API, {
+            subSectionId,
+            courseId,
+            token,
+        });
         if (res?.success) {
             dispatch(updateCompletedLectures(subSectionId));
-			toast.success('Marked as Completed')
+            toast.success("Marked as Completed");
+        } else {
+            toast.dismiss("Technical glitch . Try again later");
         }
-		else{
-			toast.dismiss('Technical glitch . Try again later');
-		}
         setLoading(false);
     };
 
     return (
-        <div>
+        <div className="h-full w-full bg-richblack-900">
             {!videoData ? (
                 <div>No Data Found</div>
             ) : (
-                <div>
+                <div className=" w-full relative">
                     <ReactPlayer
                         url={videoData?.videoURL}
                         playsinline
-                        onEnded={() => setVideoEnded(true)}
+                        onEnded={() => {
+                            setVideoEnded(true);
+                            handleLectureCompletion();
+                        }}
                         ref={playerRef}
                         controls={true}
+                        width="100%"
+                        height="80%"
+                        className="aspect-video"
                     />
-                    <AiFillPlayCircle />
                     {videoEnded && (
-                        <div>
-                            {!completedLectures.includes(subSectionId) && (
+                        <div className="flex flex-row justify-between text-[60px] w-10/12">
+                            {!isFirstVideo() && (
                                 <button
                                     disabled={loading}
-                                    onClick={handleLectureCompletion}
+                                    onClick={goToPrevVideo}
                                 >
-                                    {!loading ? "Mark As Completed" : "Loading..."}
+                                    <FaBackward />
                                 </button>
                             )}
                             <button
@@ -188,34 +203,22 @@ const VideoPlayer = () => {
                                     }
                                 }}
                             >
-                                Rewatch
+                                <RiLoopLeftFill />
                             </button>
-                            <div>
-                                {!isFirstVideo() && (
-                                    <button
-                                        disabled={loading}
-                                        onClick={goToPrevVideo}
-                                        className="blackButton"
-                                    >
-                                        Prev
-                                    </button>
-                                )}
-                                {!isLastVideo() && (
-                                    <button
-                                        disabled={loading}
-                                        onClick={goToNextVideo}
-                                        className="blackButton"
-                                    >
-                                        Next
-                                    </button>
-                                )}
-                            </div>
+                            {!isLastVideo() && (
+                                <button
+                                    disabled={loading}
+                                    onClick={goToNextVideo}
+                                >
+                                    <FaForward />
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
             )}
-            <h1>{videoData?.title}</h1>
-            <p>{videoData?.description}</p>
+            <h1 className="text-3xl font-bold text-richblack-25 px-5 mt-4">{videoData?.title}</h1>
+            <p className="text-lg text-richblack-50 px-5 mt-2">{videoData?.description}</p>
         </div>
     );
 };

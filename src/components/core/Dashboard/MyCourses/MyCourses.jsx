@@ -112,14 +112,14 @@ const MyCourses = () => {
                                     return (
                                         <Tr className="">
                                             <Td className="flex flex-row my-4 pl-10">
-                                                <div>
+                                                <div className="w-[40%]">
                                                     <img
                                                         src={course.thumbnail}
                                                         width={250}
                                                         className="aspect-video rounded-lg "
                                                     />
                                                 </div>
-                                                <div className="ml-4 flex flex-col gap-2">
+                                                <div className="ml-4 flex flex-col gap-2 w-[60%]">
                                                     <div className="text-white font-semibold text-1xl">
                                                         {course.courseTitle}:
                                                     </div>

@@ -233,7 +233,7 @@ exports.getEnrolledCourses = async (req, res) => {
 
                 course.courseContent.forEach((section) => {
                     section.subSections.forEach((subSection) => {
-                        totalDuration += subSection.duration;
+                        totalDuration += Number(subSection.duration);
                         totalSubSections++;
                     });
                 });

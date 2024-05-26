@@ -50,9 +50,9 @@ const Home = () => {
                     </div>
 
                     {/* video banner */}
-                    <div className="shadow-blue-200 mx-16 my-7 ">
-                        <video muted autoPlay loop>
-                            <source src={banner} type="video/mp4" />
+                    <div className=" mx-16 my-7 shadow-[2px_2px_10px_0px_rgba(0,100,100,0.3)]">
+                        <video muted autoPlay loop >
+                            <source src={banner} type="video/mp4"  />
                         </video>
                     </div>
 

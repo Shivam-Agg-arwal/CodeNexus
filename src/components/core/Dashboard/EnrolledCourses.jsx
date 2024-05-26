@@ -96,7 +96,7 @@ const EnrolledCourses = () => {
                                         <div>
                                             <div className="text-richblack-5 capitalize">{course.courseTitle}</div>
                                             <div className="text-richblack-300">
-                                                {course.courseDescription}
+                                                {course.courseDescription.substr(0,110)}{course.courseDescription.length>110?"...":""}
                                             </div>
                                         </div>
                                     </Td>

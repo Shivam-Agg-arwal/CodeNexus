@@ -50,9 +50,11 @@ const CourseViewer = () => {
     }, [token, GET_COURSE_PLUS_PROGRESS_DETAILS_API, courseId, dispatch]);
 
     return (
-        <div className="flex flex-row gap-2">
-            <CourseViewerSidebar setReviewModalData={setReviewModalData} />
-            <div>
+        <div className="flex flex-row">
+            <div className="w-[20%] min-h-screen border-r-[1px] border-r-[white]">
+                <CourseViewerSidebar setReviewModalData={setReviewModalData} />
+            </div>
+            <div className="w-[80%] min-h-screen">
                 <Outlet />
             </div>
             {reviewModalData && (
