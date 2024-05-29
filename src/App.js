@@ -25,6 +25,7 @@ import CourseDetails from "./pages/CourseDetails";
 import CourseViewer from "./pages/CourseViewer";
 import VideoPlayer from "./components/core/CourseViewer/VideoPlayer";
 import InstructorDashboard from "./components/core/Dashboard/InstructorDashboard/InstructorDashboard";
+import Cart from "./pages/Cart";
 
 function App() {
 	const { user } = useSelector((state) => state.profile);
@@ -58,6 +59,7 @@ function App() {
 					<Route path="/dashboard/enrolled-courses" element={<EnrolledCourses />} />
 					<Route path="/dashboard/purchase-history" element={<PurchaseHistory />} />
 					<Route path="/dashboard/settings" element={<Settings />} />
+					<Route path="/dashboard/cart" element={<Cart />} />
 
 
 					{user && user.accountType === "Instructor" && (<Route path="/dashboard/add-course" element={<AddCourse />} />)}

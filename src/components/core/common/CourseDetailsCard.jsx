@@ -1,19 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import copy from "copy-to-clipboard";
 import { toast } from "react-hot-toast";
-import { addToCart } from "../../../components/core/slices/cartSlice";
+import { addToCart, removeFromCart } from "../../../components/core/slices/cartSlice";
 
 function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
     const { user } = useSelector((state) => state.profile);
     const { token } = useSelector((state) => state.auth);
+    const {cart}=useSelector((state)=>state.cart);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [courseInCart,setCourseInCart]=useState(false);
+
+    useEffect(()=>{
+        console.log('cart investigation');
+        if (courseInCart===false && cart.findIndex(
+            (item) => item._id === course._id >= 0)) {
+            setCourseInCart(true);
+        }
+        else{
+            setCourseInCart(false);
+        }
+    },[cart]);
 
     const { thumbnail: ThumbnailImage, price: CurrentPrice } = course;
 
     const handleAddToCart = () => {
+        console.log("called");
         if (user && user?.accountType === "Instructor") {
             toast.error("You are an Instructor, you cant buy a course");
             return;
@@ -23,14 +37,18 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
             dispatch(addToCart(course));
             return;
         }
-        setConfirmationModal({
-            text1: "you are not logged in",
-            text2: "Please login to add to cart",
-            btnText1: "login",
-            btnText2: "cancel",
-            btnHandler1: () => navigate("/login"),
-            btnHandler2: () => setConfirmationModal(null),
-        });
+    };
+    const handleRemoveFromCart = () => {
+        console.log("called");
+        if (user && user?.accountType === "Instructor") {
+            toast.error("You are an Instructor, you cant buy a course");
+            return;
+        }
+        if (token) {
+            console.log("dispatching  remove from  cart");
+            dispatch(removeFromCart(course._id));
+            return;
+        }
     };
 
     const handleShare = () => {
@@ -62,6 +80,13 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
                     </button>
 
                     {!course?.studentsEnrolled.includes(user?._id) && (
+                        courseInCart ? 
+                        <button
+                            onClick={handleRemoveFromCart}
+                            className="bg-richblack-800 text-richblack-5 font-bold w-full rounded-lg py-2 hover:scale-95 mx-auto shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
+                        >
+                            Remove from Cart
+                        </button> :
                         <button
                             onClick={handleAddToCart}
                             className="bg-richblack-800 text-richblack-5 font-bold w-full rounded-lg py-2 hover:scale-95 mx-auto shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
