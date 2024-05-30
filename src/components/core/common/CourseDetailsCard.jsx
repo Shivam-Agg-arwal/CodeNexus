@@ -4,50 +4,37 @@ import { useNavigate } from "react-router-dom";
 import copy from "copy-to-clipboard";
 import { toast } from "react-hot-toast";
 import { addToCart, removeFromCart } from "../../../components/core/slices/cartSlice";
-
-function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
+const CourseDetailsCard = ({ course, setConfirmationModal, handleBuyCourse }) => {
     const { user } = useSelector((state) => state.profile);
     const { token } = useSelector((state) => state.auth);
-    const {cart}=useSelector((state)=>state.cart);
+    const { cart } = useSelector((state) => state.cart);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [courseInCart,setCourseInCart]=useState(false);
-
-    useEffect(()=>{
-        console.log('cart investigation');
-        if (courseInCart===false && cart.findIndex(
-            (item) => item._id === course._id >= 0)) {
-            setCourseInCart(true);
-        }
-        else{
-            setCourseInCart(false);
-        }
-    },[cart]);
+    const [courseInCart, setCourseInCart] = useState(
+        cart.findIndex((item) => item._id === course._id) !== -1
+    );
 
     const { thumbnail: ThumbnailImage, price: CurrentPrice } = course;
 
     const handleAddToCart = () => {
-        console.log("called");
         if (user && user?.accountType === "Instructor") {
-            toast.error("You are an Instructor, you cant buy a course");
+            toast.error("You are an Instructor, you can't buy a course");
             return;
         }
         if (token) {
-            console.log("dispatching add to cart");
             dispatch(addToCart(course));
-            return;
+            setCourseInCart(true);
         }
     };
+
     const handleRemoveFromCart = () => {
-        console.log("called");
         if (user && user?.accountType === "Instructor") {
-            toast.error("You are an Instructor, you cant buy a course");
+            toast.error("You are an Instructor, you can't buy a course");
             return;
         }
         if (token) {
-            console.log("dispatching  remove from  cart");
             dispatch(removeFromCart(course._id));
-            return;
+            setCourseInCart(false);
         }
     };
 
@@ -55,7 +42,7 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
         copy(window.location.href);
         toast.success("Link Copied to Clipboard");
     };
-
+    
     return (
         <div className="rounded-xl bg-richblack-700 w-[370px]">
             <img
