@@ -28,8 +28,8 @@ const StepChecker = () => {
             {
                 steps.map((stepCount)=>{
                     return (<div className='flex flex-col items-center mr-10'>
-                        <div className={` ${step===stepCount.id ? "bg-yellow-900 border-yellow-50 text-yellow-50" : "bg-richblack-800 border-richblack-700 text-richblack-300"} rounded-full p-1 h-[30px] flex items-center justify-center aspect-square `} key={stepCount.id}>{stepCount<step ? (<FaCheck/>):(stepCount.id)}</div>
-                        <div>{stepCount.title}</div>
+                        <div className={` ${step===stepCount.id ? "bg-yellow-300 border-yellow-50 text-richblack-900" : "bg-richblack-800 border-richblack-700 text-richblack-300"} font-bold rounded-full p-1 h-[30px] flex items-center justify-center aspect-square `} key={stepCount.id}>{stepCount<step ? (<FaCheck/>):(stepCount.id)}</div>
+                        <div className='font-semibold text-sm mt-1'>{stepCount.title}</div>
                     </div>)
                 })
             }

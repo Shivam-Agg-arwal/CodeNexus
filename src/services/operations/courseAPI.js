@@ -41,11 +41,11 @@ export const getAllCourses = async () => {
 	return result
 }
 
-export const fetchCourseDetails = async (courseId) => {
+export const fetchCourseDetails = async (formData) => {
 	const toastId = toast.loading("Loading...")
 	let result = null
 	try {
-		const response = await apiConnector("POST", COURSE_DETAILS_API,{courseID:courseId})
+		const response = await apiConnector("POST", COURSE_DETAILS_API,formData)
 		console.log("COURSE_DETAILS_API API RESPONSE............", response)
 
 		result=response;

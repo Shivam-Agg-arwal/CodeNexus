@@ -19,7 +19,7 @@ import Error from "./pages/Error"
 import { useSelector } from "react-redux";
 import MyCourses from "./components/core/Dashboard/MyCourses/MyCourses";
 import EditCourse from "./components/core/Dashboard/MyCourses/EditCourse";
-import AddCourse from "./components/core/Dashboard/CourseCreation.jsx/AddCourse";
+import AddCourse from "./components/core/Dashboard/CourseCreation/AddCourse";
 import CatalogPage from "./components/core/Category/CatalogPage";
 import CourseDetails from "./pages/CourseDetails";
 import CourseViewer from "./pages/CourseViewer";

@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 
 const EditCourse = () => {
     const {courseID}=useParams();
+    console.log(courseID)
     const {course}=useSelector((state)=>state.course);
     const {token}=useSelector((state)=>state.auth);
     const [loading,setLoading]=useState(false);
@@ -18,11 +19,12 @@ const EditCourse = () => {
             setLoading(true);
             const formData=new FormData();
             formData.append("courseID",courseID);
-            console.log(courseID);
-            const response=await fetchCourseDetails(formData,token);
+            console.log("form  data",[...formData]);
+            const response=await fetchCourseDetails(formData);
+            
             console.log("got",response);
-            if(response){
-                dispatch(setCourse(response));
+            if(response && response.success){
+                dispatch(setCourse(response.data));
                 dispatch(setEditCourse(true));
             }
             setLoading(false);
@@ -33,7 +35,7 @@ const EditCourse = () => {
   return (
     <div>
         {
-            loading?("Loading..."):(course? (<CreateCourse/>):("Course not found"))
+            loading?("Loading..."):(course? (<CreateCourse/>):("Course not found")) 
         }
     </div>
   )

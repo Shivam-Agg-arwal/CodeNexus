@@ -34,7 +34,7 @@ const MyProfile = () => {
         </section>
 
         {/* Section 3 */}
-        <section className='flex flex-row bg-richblack-800 p-6 rounded-lg mx-auto w-8/12 max-w-maxContent'>
+        <section className='flex flex-row justify-between bg-richblack-800 p-6 rounded-lg mx-auto w-8/12 max-w-maxContent'>
             <div className='w-10/12 flex flex-row items-start'>
                 <div className='flex flex-col gap-4 w-full pr-28'>
                     <h1 className='text-richblack-5 text-xl w-full font-bold'>Personal Details</h1>
@@ -71,7 +71,7 @@ const MyProfile = () => {
                     </div>
                 </div>
             </div>
-            <div className='w-2/12'>
+            <div className='flex flex-row justify-end items-start'>
                 <EditBtn/>
             </div>
         </section>

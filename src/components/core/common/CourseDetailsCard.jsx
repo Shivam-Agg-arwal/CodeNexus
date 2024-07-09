@@ -87,18 +87,19 @@ const CourseDetailsCard = ({ course, setConfirmationModal, handleBuyCourse }) =>
                     <p className="mx-auto text-richblack-100 text-center text-sm mt-2">
                         30-Day Money-Back Guarantee
                     </p>
-                    <p>This Course Includes:</p>
-                    <div className="flex flex-col gap-y-3">
+                    <p className="text-white font-semibold mt-2">This Course Includes:</p>
+                    {console.log(course?.instructions)}
+                    <div className="flex flex-col">
                         {course?.instructions?.map((item, index) => (
-                            <p key={index} className="flex gap-2">
-                                <span>{item}</span>
+                            <p key={index} className="flex gap-[1px]">
+                                <span className="text-caribbeangreen-200 text-sm font-normal ">{item}</span>
                             </p>
                         ))}
                     </div>
                 </div>
                 <div>
                     <button
-                        className="mx-auto flex items-center gap-2 p-2 font-bold text-yellow-50"
+                        className="mx-auto flex items-center gap-2 p-2 font-semibold mt-2 pb-10 text-yellow-50"
                         onClick={handleShare}
                     >
                         Share

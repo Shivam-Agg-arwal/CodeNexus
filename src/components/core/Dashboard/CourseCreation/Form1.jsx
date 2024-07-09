@@ -9,6 +9,7 @@ import { apiConnector } from "../../../../services/apiConnector";
 import { categories } from "../../../../services/apis";
 import { setCourse, setStep } from "../../slices/courseSlice";
 import toast from "react-hot-toast";
+import { HiCurrencyRupee } from "react-icons/hi2";
 import {
     addCourseDetails,
     editCourseDetails,
@@ -26,20 +27,26 @@ const Form1 = () => {
         setValue,
         getValues,
         formState: { errors },
+        watch,
     } = useForm();
+    const courseTitle = watch("courseTitle", "");
+    const courseDescription = watch("courseDescription", "");
 
     const { editCourse, course } = useSelector((state) => state.course);
     const [loading, setLoading] = useState(false);
     const [thumbnailChanged, setThumbnailChanged] = useState(false);
 
-    console.log("coursse",course);
-    console.log(editCourse);
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+        }
+    };
+
     const [courseCategories, setCourseCategories] = useState([]);
 
     useEffect(() => {
         const fetchCategories = async () => {
             const response = await apiConnector("GET", CATEGORIES_API);
-            console.log("Abhi ka resoppne", response);
             setCourseCategories(response.allCategories);
         };
         fetchCategories();
@@ -50,8 +57,9 @@ const Form1 = () => {
             setValue("coursePrice", course.price);
             setValue("courseCategory", course.category);
             setValue("courseBenefits", course.whatYouWillLearn);
-            
-            // setValue("tag",Object.values(JSON.parse(course.tag)));
+            setValue("courseRequirement", course.instructions);
+            setValue("courseTags", course.tag);
+
         }
     }, []);
 
@@ -63,9 +71,10 @@ const Form1 = () => {
             currentvalues.courseCategory !== course.category ||
             currentvalues.coursePrice !== course.price ||
             currentvalues.courseBenefits !== course.whatYouWillLearn ||
-            currentvalues.courseRequirement.toString() !==
-            course.instructions.toString() ||
-            currentvalues.courseTags.toString() !== course.tag.toString()
+            JSON.stringify(currentvalues.courseRequirement) !==
+                JSON.stringify(course.instructions) ||
+            JSON.stringify(currentvalues.courseTags) !==
+                JSON.stringify(course.tag)
         ) {
             return true;
         }
@@ -73,13 +82,17 @@ const Form1 = () => {
     };
 
     async function submitHandler(data) {
+        console.log("entry ");
         if (editCourse) {
             if (thumbnailChanged || dataChange()) {
+                console.log("entry 2");
                 const formData = new FormData();
                 if (currentvalues.courseTitle !== course.courseTitle) {
                     formData.append("courseTitle", currentvalues.courseTitle);
                 }
-                if (currentvalues.courseDescription !== course.courseDescription) {
+                if (
+                    currentvalues.courseDescription !== course.courseDescription
+                ) {
                     formData.append(
                         "courseDescription",
                         currentvalues.courseDescription
@@ -98,15 +111,19 @@ const Form1 = () => {
                     );
                 }
                 if (
-                    currentvalues.courseRequirement.toString() !==
-                    course.instructions.toString()
+                    JSON.stringify(currentvalues.courseRequirement) !==
+                    JSON.stringify(course.instructions)
                 ) {
                     formData.append(
                         "instructions",
                         JSON.stringify(currentvalues.courseRequirement)
                     );
                 }
-                if (currentvalues.courseTags.toString() !== course.tag.toString()) {
+
+                if (
+                    JSON.stringify(currentvalues.courseTags) !==
+                    JSON.stringify(course.tag)
+                ) {
                     formData.append(
                         "tag",
                         JSON.stringify(currentvalues.courseTags)
@@ -115,6 +132,7 @@ const Form1 = () => {
                 formData.append("thumbnailImage", currentvalues.thumbnail);
                 formData.append("courseID", course._id);
                 setLoading(true);
+                console.log("Form Data", formData);
                 const response = await editCourseDetails(formData, token);
                 console.log(response);
                 if (response) {
@@ -122,8 +140,7 @@ const Form1 = () => {
                     dispatch(setCourse(response));
                 }
                 setLoading(false);
-            }
-            else {
+            } else {
                 toast.error("No data has been changed");
                 return;
             }
@@ -159,61 +176,92 @@ const Form1 = () => {
     return (
         <form
             onSubmit={handleSubmit(submitHandler)}
+            onKeyDown={handleKeyDown}
             className="bg-richblack-800 rounded-lg p-6 flex flex-col gap-4 mt-10"
         >
             <div>
-                <label htmlFor="courseTitle">
-                    Course Title <sup>*</sup>
+                <label htmlFor="courseTitle" className="text-sm font-semibold">
+                    Course Title <sup className="text-[10px] text-red">*</sup>
                 </label>
-                <input
-                    id="courseTitle"
-                    type="text"
-                    name="courseTitle"
-                    placeholder="Enter course title"
-                    {...register("courseTitle", { required: true })}
-                    className="bg-richblack-700 px-4 py-3 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
-                />
+                <div className="relative">
+                    <input
+                        id="courseTitle"
+                        type="text"
+                        name="courseTitle"
+                        placeholder="Enter course title"
+                        maxLength={100}
+                        {...register("courseTitle", {
+                            required: true,
+                            maxLength: 100,
+                        })}
+                        className="bg-richblack-700 px-4 py-3 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
+                    />
 
-                {errors.courseTitle && <span>Course Title is required.</span>}
-            </div>
-            <div>
-                <label htmlFor="courseDescription">
-                    Course Description <sup>*</sup>
-                </label>
-                <textarea
-                    type="text"
-                    id="courseDescription"
-                    name="courseDescription"
-                    placeholder="Enter course description"
-                    {...register("courseDescription", { required: true })}
-                    className="bg-richblack-700 px-4 py-3 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
-                />
-
-                {errors.courseDescription && (
-                    <span>Course Description is required.</span>
+                    <div className="text-xs text-white bottom-1 right-1 mt-1 absolute">
+                        {courseTitle.length} / 100
+                    </div>
+                </div>
+                {errors.courseTitle && (
+                    <span className="text-xs text-red">
+                        Course Title is required and should not exceed 100
+                        characters.
+                    </span>
                 )}
             </div>
             <div>
-                <label htmlFor="coursePrice">
-                    Course Price <sup>*</sup>
+                <label htmlFor="courseDescription">
+                    Course Description <sup className="text-xs text-red">*</sup>
                 </label>
-                <input
-                    type="text"
-                    id="coursePrice"
-                    name="coursePrice"
-                    placeholder="Enter course price"
-                    {...register("coursePrice", { required: true })}
-                    className="bg-richblack-700 px-4 py-3 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
-                />
+                <div className="relative">
+                    <textarea
+                        type="text"
+                        id="courseDescription"
+                        name="courseDescription"
+                        placeholder="Enter course description"
+                        maxLength={400}
+                        {...register("courseDescription", { required: true })}
+                        className="bg-richblack-700 px-4 py-3 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
+                    />
 
-                {errors.coursePrice && <span>Course Price is required.</span>}
+                    <div className="text-xs text-white absolute bottom-2 right-2 ">
+                        {courseDescription.length} / 400
+                    </div>
+                </div>
+
+                {errors.courseDescription && (
+                    <span className="text-xs text-red">
+                        Course Description is required.
+                    </span>
+                )}
+            </div>
+
+            <div className="relative">
+                <label htmlFor="coursePrice">
+                    Course Price <sup className="text-xs text-red">*</sup>
+                </label>
+                <div className="flex items-center relative">
+                    <HiCurrencyRupee className="absolute bottom-2 text-3xl pl-1 pb-1" />
+                    <input
+                        type="number"
+                        id="coursePrice"
+                        name="coursePrice"
+                        placeholder="Enter course price"
+                        {...register("coursePrice", { required: true })}
+                        className="bg-richblack-700 px-4 py-3 pl-10 rounded-lg text-white placeholder:text-richblack-200 placeholder:text-sm w-full shadow-[0_1px_0px_0px_rgba(110,114,127,1)]"
+                    />
+                </div>
+                {errors.coursePrice && (
+                    <span className="text-xs text-red">
+                        Course Price is required.
+                    </span>
+                )}
             </div>
 
             {/* Category option */}
 
             <div>
                 <label htmlFor="courseCategory">
-                    Course Category <sup>*</sup>
+                    Course Category <sup className="text-xs text-red">*</sup>
                 </label>
                 <select
                     id="courseCategory"
@@ -246,7 +294,7 @@ const Form1 = () => {
 
             {/* Thumbnail option */}
             <label>
-                Course thumbnail <sup>*</sup>
+                Course thumbnail <sup className="text-xs text-red">*</sup>
             </label>
 
             <ThumbnailSection
@@ -261,7 +309,8 @@ const Form1 = () => {
 
             <div>
                 <label htmlFor="courseBenefits">
-                    Benefits of the course <sup>*</sup>
+                    Benefits of the course{" "}
+                    <sup className="text-xs text-red">*</sup>
                 </label>
                 <textarea
                     type="text"
@@ -273,7 +322,9 @@ const Form1 = () => {
                 />
 
                 {errors.courseBenefits && (
-                    <span>Course Benefits is required.</span>
+                    <span className="text-xs text-red">
+                        Course Benefits is required.
+                    </span>
                 )}
             </div>
 
@@ -295,7 +346,10 @@ const Form1 = () => {
                     Continue without saving
                 </div>
             )}
-            <button type="submit">
+            <button
+                type="submit"
+                className="font-bold rounded-md text-black bg-yellow-50 p-2"
+            >
                 {editCourse ? "Save changes" : "Next"}
             </button>
         </form>

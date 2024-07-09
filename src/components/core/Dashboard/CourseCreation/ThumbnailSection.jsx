@@ -13,7 +13,6 @@ const ThumbnailSection = ({
     const [imageUrl, setImageUrl] = useState(image ? image : "");
     const [file, setFile] = useState("");
     const [isDraggingOver, setIsDraggingOver] = useState(false);
-    const [GetCancel, setGetCancel] = useState(false);
 
     useEffect(() => {
         register(name, {
@@ -64,7 +63,7 @@ const ThumbnailSection = ({
     };
     return (
         <div
-            className={`bg-richblack-700 rounded-lg border-dashed border-2 border-richblack-400 aspect-video items-center justify-between flex ${
+            className={`bg-richblack-700 mb-5 rounded-lg border-dashed border-2 border-richblack-400 aspect-video items-center justify-between flex ${
                 isDraggingOver ? "bg-richblack-300" : "opacity-100"
             }`}
             onDrop={handleDrop}
@@ -73,24 +72,18 @@ const ThumbnailSection = ({
         >
             {imageUrl ? (
                 <div className="flex items-center justify-between flex-col">
-                    <img src={imageUrl} className="aspect-video p-4" />
-                    <button onClick={() => setGetCancel(true)}>
-                        Want to Change ?{" "}
+                    <img src={imageUrl} className="aspect-video pt-4 px-4 pb-2" />
+                    <button
+                        onClick={() => {
+                            setImageUrl("");
+                        }}
+                        className="text-center text-xs font-bold text-richblack-5 underline pb-2"
+                    >
+                        Remove
                     </button>
-                    {GetCancel && (
-                        <button
-                            onClick={() => {
-                                setImageUrl("");
-                                setGetCancel(false);
-                            }}
-                            className="text-center text-richblack-5 underline"
-                        >
-                            Change
-                        </button>
-                    )}
                 </div>
             ) : (
-                <div className="flex items-center justify-between mx-auto">
+                <div className="flex items-center justify-between mx-auto relative">
                     <label
                         htmlFor={name}
                         className="flex items-center justify-between h-full"
@@ -115,7 +108,7 @@ const ThumbnailSection = ({
                         className="hidden h-0"
                         onChange={handleFileInputChange}
                     />
-                    {errors[name] && <span>Image is needed.</span>}
+                    {errors[name] && <span className="text-xs text-red absolute -bottom-28 -left-14 ">Image is needed.</span>}
                 </div>
             )}
         </div>
