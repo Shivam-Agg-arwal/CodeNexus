@@ -1,4 +1,4 @@
-const { GiExplosiveMaterials } = require("react-icons/gi");
+
 const Category = require("../models/Category");
 const Course = require("../models/Course");
 const User = require("../models/User");
