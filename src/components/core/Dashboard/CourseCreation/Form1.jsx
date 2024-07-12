@@ -16,7 +16,6 @@ import {
 } from "../../../../services/operations/courseAPI";
 
 const Form1 = () => {
-    const { step } = useSelector((state) => state.course);
     const dispatch = useDispatch();
     const { token } = useSelector((state) => state.auth);
 
